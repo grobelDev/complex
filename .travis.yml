@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t grobeldev/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true grobeldev/react-test npm test
+
+after_success:
+  - docker build -t grobeldev/multi-client ./client
+  - docker build -t grobeldev/multi-nginx ./nginx
+  - docker build -t grobeldev/multi-server ./server
+  - docker build -t grobeldev/multi-worker ./worker
+  # Log into the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push grobeldev/multi-client
+  - docker push grobeldev/multi-nginx
+  - docker push grobeldev/multi-server
+  - docker push grobeldev/multi-worker
