@@ -20,3 +20,15 @@ after_success:
   - docker push grobeldev/multi-nginx
   - docker push grobeldev/multi-server
   - docker push grobeldev/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: 'us-west-1'
+  app: 'multi-docker'
+  env: 'MultiDocker-env'
+  bucket_name: 'elasticbeanstalk-us-west-1-417704716354'
+  bucket_path: 'docker-multi'
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
